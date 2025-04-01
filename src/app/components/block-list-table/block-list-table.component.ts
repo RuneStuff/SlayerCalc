@@ -175,7 +175,9 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
   @ViewChild(MatSort) sort!: MatSort;
 
   allComplete: boolean = false;
-  tasksBlocked: number = 0;
+  tasksBlocked: TaskData[] = [];
+
+  blockList: string[] = [];
 
   activeWeight: number = 0;
   blockedWeight: number = 0;
@@ -191,7 +193,7 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
   dataSource!: MatTableDataSource<TaskData>;
 
   ngOnChanges(changes: SimpleChanges) {
-    //heavily slows down the app
+    //Slows down the app
     if (changes['Tasks'] && Array.isArray(this.Tasks)) {
       // Avoid recreating form controls if they already exist
       this.Tasks = this.Tasks.map(task => {
@@ -206,10 +208,10 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
         return task;
       });
   
-      // Create datasource only when Tasks actually change
       this.dataSource = new MatTableDataSource(this.Tasks);
       this.dataSource.sort = this.sort;
 
+      this.loadSavedLists();
       this.checkLockedTasks(this.userLevels.combatLvl, this.userLevels.slayerLvl);
     }
 
@@ -224,7 +226,6 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
     }
   }
 
-  // Reload with data from parent component
   ngOnInit() {
 		this.Tasks = this.Tasks.map(task => ({
       ...task,
@@ -232,7 +233,8 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
       prevStatus: task.statusControl?.value,
     }));
     this.dataSource = new MatTableDataSource(this.Tasks);
-    
+
+    this.loadSavedLists();    
     this.calculateWeights();
     this.totalWeight = this.activeWeight + this.blockedWeight + this.lockedWeight + this.skipWeight;
     
@@ -248,9 +250,36 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  loadSavedLists() {
+    const savedList = localStorage.getItem('SavedList');
+    if (savedList) {
+      const parsedList = JSON.parse(savedList);
+      this.blockList = parsedList.blocked || [];
+      this.Tasks.forEach(task => {
+        if (this.blockList.includes(task.name)) {
+          task.statusControl?.setValue('Blocked');
+        } else if (parsedList.skiped?.includes(task.name)) {
+          task.statusControl?.setValue('Skip');
+        } else if (parsedList.locked?.includes(task.name)) {
+          task.statusControl?.setValue('Locked');
+        } else {
+          task.statusControl?.setValue('Active');
+        }
+        task.prevStatus = task.statusControl?.value;
+      });
+    }
+    this.countSkipTasks = this.Tasks.filter(task => task.statusControl?.value === 'Skip').length;
+  }
+
   onChangeStatus(task: TaskData) {
-    //console.log("new:", task.statusControl?.value, "prev:", task.prevStatus);
-    this.tasksBlocked = this.Tasks.filter(task => task.statusControl?.value === 'Blocked').length;
+    this.tasksBlocked = this.Tasks.filter(task => task.statusControl?.value === 'Blocked');
+    localStorage.setItem(
+      'SavedList', JSON.stringify({
+        'blocked': this.tasksBlocked.map(task => task.name),
+        'skiped': this.Tasks.filter(task => task.statusControl?.value === 'Skip').map(task => task.name),
+        'locked': this.Tasks.filter(task => task.statusControl?.value === 'Locked').map(task => task.name)
+      })
+    );
 
     if (task.statusControl?.value === 'Active') {
       if (task.prevStatus === 'Skip') {
@@ -261,7 +290,7 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
       if (task.prevStatus === 'Skip') {
         this.countSkipTasks--;
       }
-      if (this.tasksBlocked > 7) {
+      if (this.tasksBlocked.length > 7) {
         this._snackBar.open('You have more than 7 tasks blocked!', 'Close', {
           duration: 2500
         });
@@ -343,9 +372,11 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
 
   calculateChances() {
     this.Tasks.forEach(task => {
-      task.chance = (task.statusControl?.value === 'Active' || task.statusControl?.value === 'Skip') 
-        ? parseFloat(((task.weight / totalRelevantWeight) * 100).toFixed(2)) 
-        : 0;
+      if (task.statusControl?.value === 'Active' || task.statusControl?.value === 'Skip') {
+        task.chance = this.calculateChance(task.weight);
+      } else {
+        task.chance = 0;
+      }
     });
   }
 
