@@ -295,15 +295,18 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   calculateWeights() {
-    this.activeWeight = this.Tasks.filter(task => task.statusControl?.value === 'Active').reduce((acc, task) => acc + task.weight, 0);
-    this.lockedWeight = this.Tasks.filter(task => task.statusControl?.value === 'Locked').reduce((acc, task) => acc + task.weight, 0);
-    this.blockedWeight = this.Tasks.filter(task => task.statusControl?.value === 'Blocked').reduce((acc, task) => acc + task.weight, 0);
-    this.skipWeight = this.Tasks.filter(task => task.statusControl?.value === 'Skip').reduce((acc, task) => acc + task.weight, 0);
+    const weightReducer = (status: string) => 
+      this.Tasks.filter(task => task.statusControl?.value === status)
+        .reduce((acc, task) => acc + task.weight, 0);
+
+    this.activeWeight = weightReducer('Active');
+    this.lockedWeight = weightReducer('Locked');
+    this.blockedWeight = weightReducer('Blocked');
+    this.skipWeight = weightReducer('Skip');
 
     this.calculateChances();
     this.calculatePoints();
     this.calculateSkipPercentage();
-    //this.printWeight();
   }
 
   checkLockedTasks(combat: number, slayer: number) {
@@ -340,11 +343,9 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
 
   calculateChances() {
     this.Tasks.forEach(task => {
-      if (task.statusControl?.value === 'Active' || task.statusControl?.value === 'Skip') {
-        task.chance = this.calculateChance(task.weight);
-      } else {
-        task.chance = 0;
-      }
+      task.chance = (task.statusControl?.value === 'Active' || task.statusControl?.value === 'Skip') 
+        ? parseFloat(((task.weight / totalRelevantWeight) * 100).toFixed(2)) 
+        : 0;
     });
   }
 
