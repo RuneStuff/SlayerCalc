@@ -130,7 +130,7 @@ export class AccountSettingsComponent implements OnInit {
     });
   }
 
-  onFetchUser() {
+  onFetchUser(type: string) {
     const username = this.rsn.value?.trim();
   
     if (!username) {
@@ -140,6 +140,14 @@ export class AccountSettingsComponent implements OnInit {
       });
       return;
     }
+
+    Lit.event('Fetch user stats', {
+      metadata: {
+        'type': type,
+        'rsn': this.rsn.value || '',
+        'new user': localStorage.getItem('levels') ? 'false' : 'true'
+      }
+    })
   
     this._user.getUserStats(username).subscribe({
       next: (data: any) => {
@@ -198,27 +206,6 @@ export class AccountSettingsComponent implements OnInit {
     const rangedCombat = 13 / 40 * Math.floor(3 * levels.Ranged / 2);
     const magicCombat = 13 / 40 * Math.floor(3 * levels.Magic / 2);
     return Math.floor(base + Math.max(meleeCombat, rangedCombat, magicCombat));
-  }
-
-  fetchEvent(type: string) {
-    Lit.event('Fetch user stats', {
-      metadata: {
-        type: type,
-      }
-    })
-  }
-
-  pointConfigEvent(type: string) {
-    Lit.event('Point configuration', {
-      metadata: {
-        type: type,
-      }
-    })
-  }
-
-  toggleSettingEevent(tpye: any) {
-    console.log('toggleSettingEevent', tpye);
-    Lit.event('Close settings')
   }
 
 }
