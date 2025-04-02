@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
+import { Lit } from 'litlyx-js';
 
 import { BlockListTableComponent } from '../../components/block-list-table/block-list-table.component';
 import { AccountSettingsComponent } from '../../components/account-settings/account-settings.component';
@@ -398,6 +399,12 @@ export class BlockListComponent implements OnInit {
       this.pointsFormData.WesternDiary
     );
     this.selectedTasks = this.slayerMasters[index].tasks;
+
+    Lit.event('Slayer master changed', {
+      metadata: {
+        'Master': this.selectedMasterName,
+      }
+    });
   }
 
   onQuestsUpdated(updatedQuests: Quest[]) {

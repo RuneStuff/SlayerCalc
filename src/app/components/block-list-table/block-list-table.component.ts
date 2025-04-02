@@ -14,6 +14,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Lit } from 'litlyx-js';
 
 import { TaskData } from '../../models/slayer.type';
 import { Quest } from '../../models/slayer.type';
@@ -309,6 +310,13 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
     }
     task.prevStatus = task.statusControl?.value;
     this.calculateWeights();
+
+    Lit.event('Task status change', {
+      metadata: {
+        'task': task.name,
+        'status': task.statusControl?.value
+      }
+    })
   }
 
   printWeight() {

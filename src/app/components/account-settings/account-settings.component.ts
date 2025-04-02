@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common'; 
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,10 +12,12 @@ import { MatTooltipModule} from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Lit } from 'litlyx-js';
 
 import { GetStatsService } from '../../services/get-stats.service';
 
 import { Quest } from '../../models/slayer.type';
+
 
 @Component({
   selector: 'app-account-settings',
@@ -196,6 +198,27 @@ export class AccountSettingsComponent implements OnInit {
     const rangedCombat = 13 / 40 * Math.floor(3 * levels.Ranged / 2);
     const magicCombat = 13 / 40 * Math.floor(3 * levels.Magic / 2);
     return Math.floor(base + Math.max(meleeCombat, rangedCombat, magicCombat));
+  }
+
+  fetchEvent(type: string) {
+    Lit.event('Fetch user stats', {
+      metadata: {
+        type: type,
+      }
+    })
+  }
+
+  pointConfigEvent(type: string) {
+    Lit.event('Point configuration', {
+      metadata: {
+        type: type,
+      }
+    })
+  }
+
+  toggleSettingEevent(tpye: any) {
+    console.log('toggleSettingEevent', tpye);
+    Lit.event('Close settings')
   }
 
 }

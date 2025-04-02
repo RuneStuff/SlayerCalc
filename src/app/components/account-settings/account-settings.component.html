@@ -8,9 +8,9 @@
         <mat-card-content style="display: flex; align-items: center;">
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Enter your username</mat-label>
-                <input matInput maxlength="15" [formControl]="rsn" (keyup.enter)="onFetchUser()">
+                <input matInput maxlength="15" [formControl]="rsn" (keyup.enter)="onFetchUser();fetchEvent('enter')">
             </mat-form-field>
-            <button mat-fab extended color="warn" (click)="onFetchUser()" style="margin-left: 20px;">
+            <button mat-fab extended color="warn" (click)="onFetchUser();fetchEvent('click')" style="margin-left: 20px;">
                 <mat-icon>search</mat-icon>
                 Look up
             </button>
