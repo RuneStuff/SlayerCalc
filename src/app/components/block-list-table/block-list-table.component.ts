@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ViewChild, Input, inject, ChangeDetectorRef, ChangeDetectionStrategy, OnChanges, SimpleChanges, OnInit } from '@angular/core';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { Component, AfterViewInit, ViewChild, Input, inject, ChangeDetectionStrategy, OnChanges, SimpleChanges, OnInit, OnDestroy, signal } from '@angular/core';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,8 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { MediaMatcher } from '@angular/cdk/layout';
 import { Lit } from 'litlyx-js';
 
 import { TaskData } from '../../models/slayer.type';
@@ -27,7 +28,6 @@ import { TaskReq } from '../../models/slayer.type';
         MatInputModule,
         MatTableModule,
         MatSortModule,
-        MatPaginatorModule,
         MatIconModule,
         MatButtonModule,
         MatCardModule,
@@ -37,14 +37,15 @@ import { TaskReq } from '../../models/slayer.type';
         FormsModule,
         ReactiveFormsModule,
         MatCheckboxModule,
-        MatGridListModule
+        MatSelectModule,
+        CommonModule
     ],
     templateUrl: './block-list-table.component.html',
     styleUrl: './block-list-table.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges{
+export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
   Tasksreqs: TaskReq[] = [
     {name: 'Aberrant spectres', slayer: 60, combat: 65, unlockable: false, quests: ['Priest in Peril']},
@@ -172,7 +173,6 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
   @Input() userLevels: any = {};
   @Input() masterName: string = '';
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   allComplete: boolean = false;
@@ -192,6 +192,23 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
 
   displayedColumns: string[] = ['name', 'weight', 'chance', 'status'];
   dataSource!: MatTableDataSource<TaskData>;
+
+  protected readonly isMobile = signal(true);
+  private readonly _mobileQuery: MediaQueryList;
+  private readonly _mobileQueryListener: () => void;
+
+  constructor() {
+    const media = inject(MediaMatcher);
+
+    this._mobileQuery = media.matchMedia('(max-width: 700px)');
+    this.isMobile.set(this._mobileQuery.matches);
+    this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
+    this._mobileQuery.addEventListener('change', this._mobileQueryListener);
+  }
+
+  ngOnDestroy(): void {
+    this._mobileQuery.removeEventListener('change', this._mobileQueryListener);
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     //Slows down the app
@@ -234,6 +251,11 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
       prevStatus: task.statusControl?.value,
     }));
     this.dataSource = new MatTableDataSource(this.Tasks);
+
+    // Adjust displayed columns for mobile
+    this.displayedColumns = this.isMobile() 
+      ? ['name', 'chance', 'status'] 
+      : ['name', 'weight', 'chance', 'status'];
 
     this.loadSavedLists();    
     this.calculateWeights();
