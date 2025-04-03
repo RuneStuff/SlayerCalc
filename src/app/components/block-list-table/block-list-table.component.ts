@@ -252,6 +252,11 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
     }));
     this.dataSource = new MatTableDataSource(this.Tasks);
 
+    // Adjust displayed columns for mobile
+    this.displayedColumns = this.isMobile() 
+      ? ['name', 'chance', 'status'] 
+      : ['name', 'weight', 'chance', 'status'];
+
     this.loadSavedLists();    
     this.calculateWeights();
     this.totalWeight = this.activeWeight + this.blockedWeight + this.lockedWeight + this.skipWeight;

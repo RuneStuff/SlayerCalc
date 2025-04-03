@@ -51,8 +51,7 @@
                         </mat-button-toggle-group>
                     }
                     @if (isMobile()) {
-                        <mat-label>Status</mat-label>
-                        <mat-select [value]="row.statusControl" (change)="onChangeStatus(row)">
+                        <mat-select [formControl]="row.statusControl" (selectionChange)="onChangeStatus(row)">
                             <mat-option value="Active">Active</mat-option>
                             <mat-option value="Blocked">Blocked</mat-option>
                             <mat-option value="Locked">Locked</mat-option>
@@ -69,7 +68,7 @@
             </ng-container>
     
             <!-- Weight Column -->
-            <ng-container matColumnDef="weight">
+            <ng-container matColumnDef="weight" *ngIf="!isMobile()">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Weight </th>
                 <td mat-cell *matCellDef="let row"> {{row.weight}} </td>
             </ng-container>
