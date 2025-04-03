@@ -36,3 +36,12 @@
     background-color: #f5f5f5;
     border-radius: 4px;
 }
+
+@media (max-width: 600px) {
+    .tab-buttons {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        justify-content: flex-start;
+    }
+}
