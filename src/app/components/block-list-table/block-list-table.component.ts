@@ -375,6 +375,15 @@ export class BlockListTableComponent implements OnInit, AfterViewInit, OnChanges
         }
       }
     });
+
+    localStorage.setItem(
+      'SavedList', JSON.stringify({
+        'blocked': this.Tasks.filter(task => task.statusControl?.value === 'Blocked').map(task => task.name),
+        'skiped': this.Tasks.filter(task => task.statusControl?.value === 'Skip').map(task => task.name),
+        'locked': this.Tasks.filter(task => task.statusControl?.value === 'Locked').map(task => task.name)
+      })
+    );
+
     this.calculateWeights();
   }
 
