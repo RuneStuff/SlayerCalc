@@ -82,7 +82,6 @@ export class BlockListComponent implements OnInit {
     {id: '10', name: 'Blue dragons', weight: 4},
     {id: '11', name: 'Boss', weight: 8},
     {id: '12', name: 'Brine rats', weight: 2},
-    {id: '13', name: 'Bronze dragons', weight: 5},
     {id: '14', name: 'Cave kraken', weight: 9},
     {id: '15', name: 'Dagannoth', weight: 8},
     {id: '16', name: 'Dark beasts', weight: 5},
@@ -94,20 +93,16 @@ export class BlockListComponent implements OnInit {
     {id: '23', name: 'Greater demons', weight: 7},
     {id: '24', name: 'Hellhounds', weight: 8},
     {id: '45', name: 'Hydras', weight: 10},
-    {id: '25', name: 'Iron dragons', weight: 5},
     {id: '71', name: 'Jellies', weight: 6},
     {id: '26', name: 'Kalphites', weight: 9},
     {id: '27', name: 'Kurasks', weight: 3},
     {id: '72', name: 'Lesser Nagua', weight: 2},
     {id: '28', name: 'Lizardmen', weight: 8},
-    {id: '29', name: 'Mithril dragons', weight: 5},
     {id: '30', name: 'Mutated Zygomites', weight: 2},
     {id: '31', name: 'Nechryael', weight: 7},
     {id: '32', name: 'Red dragons', weight: 5},
-    {id: '33', name: 'Rune dragons', weight: 5},
     {id: '34', name: 'Skeletal wyverns', weight: 5},
     {id: '35', name: 'Smoke devils', weight: 7},
-    {id: '37', name: 'Steel dragons', weight: 5},
     {id: '39', name: 'Trolls', weight: 6},
     {id: '70', name: 'Turoth', weight: 3},
     {id: '41', name: 'Vampyres', weight: 4},
@@ -159,6 +154,7 @@ export class BlockListComponent implements OnInit {
     {id: '41', name: 'Vampyres', weight: 6},
     {id: '42', name: 'Warped creatures', weight: 6},
     {id: '44', name: 'Wyrms', weight: 7}
+    {id: '45', name: 'Red dragons', weight: 5}
   ];
 
   ChaeldarTasks: TaskData[] = [
