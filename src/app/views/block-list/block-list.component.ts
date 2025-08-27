@@ -72,7 +72,7 @@ export class BlockListComponent implements OnInit {
   KonarTasks: TaskData[] = [
     {id: '1', name: 'Aberrant spectres', weight: 6},
     {id: '2', name: 'Abyssal Demon', weight: 9},
-    {id: '3', name: 'Adamant dragons', weight: 5},
+    {id: '3', name: 'Metal dragons', weight: 15},
     {id: '4', name: 'Ankou', weight: 5},
     {id: '5', name: 'Aviansies', weight: 6},
     {id: '6', name: 'Basilisks', weight: 5},
@@ -119,7 +119,7 @@ export class BlockListComponent implements OnInit {
   NieveTasks: TaskData[] = [
     {id: '1', name: 'Aberrant spectres', weight: 6},
     {id: '2', name: 'Abyssal Demon', weight: 9},
-    {id: '3', name: 'Metal dragons', weight: 15},
+    {id: '3', name: 'Metal dragons', weight: 12},
     {id: '4', name: 'Ankou', weight: 5},
     {id: '46', name: 'Araxytes', weight: 8},
     {id: '5', name: 'Aviansies', weight: 6},
